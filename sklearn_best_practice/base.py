@@ -8,6 +8,7 @@ from sklearn.metrics import (
     root_mean_squared_error,
 )
 
+
 class BaseModel:
     """
     Base class for all sklearn-like format models
@@ -15,10 +16,16 @@ class BaseModel:
     Parameters:
         model (Any): The model object
     """
+
     def __init__(self, model: Any, config: None | Dict[str, Any]) -> None:
         self.model = model(**config) if config is not None else model()
 
-    def train(self, x_tr: np.ndarray, y_tr: np.ndarray, x_te: np.ndarray) -> np.ndarray:
+    def train(
+        self,
+        x_tr: np.ndarray,
+        y_tr: np.ndarray,
+        x_te: np.ndarray
+    ) -> np.ndarray:
         """
         Train the model
 
@@ -34,7 +41,12 @@ class BaseModel:
 
         return y_pred
 
-    def evaluate(self, y_pred: np.ndarray, y_true: np.ndarray, issue: str = "reg") -> float:
+    def evaluate(
+        self,
+        y_pred: np.ndarray,
+        y_true: np.ndarray,
+        issue: str = "reg"
+    ) -> float:
         """
         Evaluate the model
 

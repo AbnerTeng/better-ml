@@ -52,7 +52,9 @@ if __name__ == "__main__":
     if args.lab == "scratch_id3":
         toy = load_toy()
         X, y = toy.data, toy.target
-        x_tr, x_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
+        x_tr, x_te, y_tr, y_te = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
         id3_algo = ID3(max_depth=3)
         id3_algo.fit(x_tr, y_tr)
         y_pred = id3_algo.predict(x_te)
@@ -62,7 +64,9 @@ if __name__ == "__main__":
         rf_config = load_config("config/rf_config.yml")
         iris = load_iris()
         X, y = iris.data, iris.target
-        x_tr, x_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
+        x_tr, x_te, y_tr, y_te = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
         rf = RFTrainer(RandomForestClassifier, rf_config)
         y_pred = rf.train(x_tr, y_tr, x_te)
         rf.evaluate(y_pred, y_te, issue="clf")

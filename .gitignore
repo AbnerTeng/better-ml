@@ -1,5 +1,5 @@
 *.ipynb
-
+*.swp
 # Mac system files
 .DS_Store
 
