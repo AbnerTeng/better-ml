@@ -4,5 +4,4 @@ pandas==1.4.2
 PyYAML==6.0.2
 rich==13.9.4
 scikit_learn==1.1.1
-torch==1.11.0
 yfinance==0.2.49
