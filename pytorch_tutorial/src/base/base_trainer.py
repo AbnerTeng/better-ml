@@ -1,7 +1,8 @@
 from abc import abstractmethod
-from typing import Optional, Dict, Any, Union
+from typing import Union
 
 import numpy as np
+import omegaconf
 from rich import print
 from rich.progress import track
 import torch
@@ -19,16 +20,11 @@ class BaseTrainer:
         model: nn.Module
         settings: Dict, default=None -> settings for training
     """
-    def __init__(
-        self,
-        model: nn.Module,
-        settings: Optional[Dict[str, Any]] = None
-    ) -> None:
+
+    def __init__(self, model: nn.Module, settings: omegaconf.DictConfig) -> None:
         self.model = model
         self.settings = settings
-        self.device = torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu"
-        )
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.loss = {
             "train": [],
             "val": [],
@@ -40,7 +36,7 @@ class BaseTrainer:
         feature: Union[torch.Tensor, np.ndarray],
         target: Union[torch.Tensor, np.ndarray],
         *args,
-        **kwargs
+        **kwargs,
     ):
         raise NotImplementedError
 
@@ -81,7 +77,9 @@ class BaseTrainer:
             vl_loss, _ = self.evaluate(valid_loader)
             self.loss["val"].append(vl_loss)
 
-            print(f"Epoch {epoch + 1}/{self.settings.n_epochs} | Train loss: {self.loss['train'][-1]} | Val loss: {self.loss['val'][-1]}")
+            print(
+                f"Epoch {epoch + 1}/{self.settings.n_epochs} | Train loss: {self.loss['train'][-1]} | Val loss: {self.loss['val'][-1]}"
+            )
 
             early_stopping(vl_loss, self.model, self.settings.checkpoint_path)
 
@@ -104,7 +102,6 @@ class BaseTrainer:
 
         with torch.no_grad():
             for feature, _ in dataloader:
-
                 if not isinstance(feature, torch.Tensor):
                     feature = torch.tensor(feature).float().to(self.device)
 

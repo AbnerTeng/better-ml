@@ -34,4 +34,4 @@ if __name__  == "__main__":
     data = yf.download(args.ticker, start=args.start, end=args.end)
     data.drop(columns=["Adj Close"], inplace=True)
     mat = data.to_numpy()
-    print(mat.shape)
+    np.save("data/stock.npy", mat)

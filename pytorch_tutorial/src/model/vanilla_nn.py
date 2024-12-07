@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 
+
 class VanillaNN(nn.Module):
     """
     Plain neural network model with 2 hidden layers.
@@ -10,6 +11,7 @@ class VanillaNN(nn.Module):
         hidden_dim (int): The number of hidden units.
         output_dim (int): The number of output units.
     """
+
     def __init__(self, input_dim: int, hidden_dim: int, output_dim: int) -> None:
         super().__init__()
         self.input_dim = input_dim

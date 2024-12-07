@@ -1,7 +1,8 @@
 """
 Build PyTorch Dataset
 """
-from typing import Literal, Tuple, Dict, Any, Optional
+
+from typing import Literal, Tuple, Dict, Any
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -28,14 +29,19 @@ class HouseDataset(Dataset):
         self.input_dim, self.output_dim = 0, 0
         self.feature, self.target = self.__readdata__()
 
-    def __readdata__(self) -> Tuple[np.ndarray, np.ndarray]:
+    def __readdata__(
+        self,
+    ) -> Tuple[np.ndarray | Any | list, np.ndarray | Any | list]:
         """
         Assert file type is pickle here (tabular benchmark dataset)
         """
         data = load_data(self.path)
         feature, target = data.data, data.target
 
-        self.input_dim, self.output_dim = len(data.feature_names), len(data.target_names)
+        self.input_dim, self.output_dim = (
+            len(data.feature_names),
+            len(data.target_names),
+        )
 
         assert isinstance(feature, np.ndarray)
         assert isinstance(target, np.ndarray)
@@ -56,6 +62,9 @@ class HouseDataset(Dataset):
         if self.tags == "test":
             return test_x, test_y
 
+        else:
+            raise ValueError("Invalid tag")
+
     def __getitem__(self, idx: int) -> Tuple[np.ndarray, np.ndarray]:
         return self.feature[idx], self.target[idx]
 
@@ -64,28 +73,27 @@ class HouseDataset(Dataset):
 
 
 def build_dataloader(
-    tags: Literal["train", "val", "test"],
-    data_conf: Dict[str, Any]
-) -> Tuple[DataLoader, Optional[int], Optional[int]]:
+    tags: Literal["train", "val", "test"], data_conf: Dict[str, Any]
+) -> Tuple[DataLoader, int, int]:
     """
     Build PyTorch DataLoader
     """
+    input_dim, output_dim = 0, 0
+
     dataset = HouseDataset(
-        path=data_conf['path'],
+        path=data_conf["path"],
         tags=tags,
-        train_ratio=data_conf['train_ratio'],
+        train_ratio=data_conf["train_ratio"],
     )
     dataloader = DataLoader(
         dataset=dataset,
-        batch_size=data_conf['batch_size'],
-        shuffle=data_conf['shuffle'],
-        num_workers=data_conf['num_workers'],
+        batch_size=data_conf["batch_size"],
+        shuffle=data_conf["shuffle"],
+        num_workers=data_conf["num_workers"],
     )
 
     if tags == "train":
         input_dim = dataset.input_dim
         output_dim = dataset.output_dim
 
-        return dataloader, input_dim, output_dim
-
-    return dataloader
+    return dataloader, input_dim, output_dim
